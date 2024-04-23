@@ -11,4 +11,17 @@ export class PrismaEventRepository implements EventsRepository {
 
     return event
   }
+
+  async findBySlug(slug: string): Promise<{ 
+    id: string 
+    title: string 
+    details: string | null 
+    slug: string 
+    maximumAttendees: number | null 
+  } | null> {
+    const eventSlug = await prisma.event.findUnique({
+      where: { slug },
+    })
+    return eventSlug
+  }
 }

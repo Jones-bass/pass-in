@@ -4,13 +4,12 @@ import { makeCreateEventUseCase } from '../usecases/factories/make-create-event-
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
   const createGymBodySchema = z.object({
-    title: z.string(),
+    title: z.string().min(4),
     details: z.string(),
-    maximumAttendees: z.number(),
-    slug: z.string(),
+    maximumAttendees: z.number().int().positive(),
   })
 
-  const { title, details, maximumAttendees, slug } =
+  const { title, details, maximumAttendees } =
     createGymBodySchema.parse(request.body)
 
   const createEventUseCase = makeCreateEventUseCase()
@@ -19,7 +18,6 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     title,
     details,
     maximumAttendees,
-    slug,
   })
 
   return reply.status(201).send()
