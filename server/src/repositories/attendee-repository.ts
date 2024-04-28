@@ -8,4 +8,5 @@ export interface propsAttendee {
 
 export interface AttendeeRepository {
   create(data: propsAttendee): Promise<Attendee | null>
+  findMaxNumber(eventId: string, email: string): Promise<Attendee | null>
 }

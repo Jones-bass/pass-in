@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { makeCreateEventUseCase } from '../usecases/factories/make-create-event-use-case'
 
-export async function create(request: FastifyRequest, reply: FastifyReply) {
+export async function createEventController(request: FastifyRequest, reply: FastifyReply) {
   const createGymBodySchema = z.object({
     title: z.string().min(4),
     details: z.string(),
