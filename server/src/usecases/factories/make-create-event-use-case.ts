@@ -4,7 +4,7 @@ import { CreateEventUseCase } from '../create-events'
 
 export function makeCreateEventUseCase() {
   const eventsRepository = new PrismaEventRepository()
-  const useCase = new CreateEventUseCase(eventsRepository)
+  const eventCase = new CreateEventUseCase(eventsRepository)
 
-  return useCase
+  return eventCase
 }
