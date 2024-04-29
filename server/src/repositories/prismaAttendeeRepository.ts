@@ -1,7 +1,8 @@
-import { AttendeeRepository, propsAttendee } from './attendee-repository'
+import { AttendeeRepository, propsAttendee, propsGetAttendee } from './attendee-repository'
 import { prisma } from '../lib/prisma'
 import { TheMaximumNumberError } from '../errors/the-maximum-number-error'
 import { EmailAlreadyExistsError } from '../errors/email-already-exists-error'
+import { Attendee } from '@prisma/client'
 
 export class PrismaAttendeeRepository implements AttendeeRepository {
   async create(data: propsAttendee) {
@@ -46,4 +47,36 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
 
     return attendeeFromEmail
   }
+
+  async findByAttendeeId( attendeeId: string): Promise<{
+    id: number;
+    name: string;
+    email: string;
+    createdAt: Date;
+    eventId: string;
+  } | null>   
+   {
+    const getEvent = await prisma.attendee.findUnique({
+      where: {
+        id: parseInt(attendeeId),
+      },
+      select: {
+        id: true, 
+        name: true,
+        email: true,
+        createdAt: true,
+        eventId: true,
+        event: {
+          select: {
+            id: true,
+            title: true,
+            details: true,
+            slug: true,
+            maximumAttendees: true,
+          },
+        },
+      },
+    });
+    return getEvent;
+}
 }
