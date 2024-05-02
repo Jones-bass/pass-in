@@ -1,4 +1,4 @@
-import { UserAlreadyExistsError } from "../errors/user-already-exists-error"
+import { EmailAlreadyExistsError } from "../errors/email-already-exists-error"
 import { AttendeeRepository } from "../repositories/attendee-repository"
 
 interface RegisterUseCaseRequest {
@@ -18,7 +18,7 @@ export class RegisterUseCase {
     const attendeeFromEmail = await this.attendeeRepository.findMaxNumber(eventId, email)
 
     if (attendeeFromEmail) {
-      throw new UserAlreadyExistsError()
+      throw new EmailAlreadyExistsError()
     }
 
     const attendeeEvent = await this.attendeeRepository.create({

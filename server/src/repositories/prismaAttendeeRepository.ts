@@ -54,6 +54,7 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
     email: string;
     createdAt: Date;
     eventId: string;
+    eventTitle: string; 
   } | null>   
    {
     const getEvent = await prisma.attendee.findUnique({
@@ -64,19 +65,24 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
         id: true, 
         name: true,
         email: true,
-        createdAt: true,
         eventId: true,
+        createdAt: true,
         event: {
           select: {
-            id: true,
-            title: true,
-            details: true,
-            slug: true,
-            maximumAttendees: true,
+            title: true, 
+            _count: true,
           },
         },
       },
     });
-    return getEvent;
-}
+  
+    if (!getEvent) return null;
+    return {
+      id: getEvent.id,
+      name: getEvent.name,
+      email: getEvent.email,
+      createdAt: getEvent.createdAt,
+      eventId: getEvent.eventId,
+      eventTitle: getEvent.event.title, 
+    };}
 }

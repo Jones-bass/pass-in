@@ -32,6 +32,7 @@ export class PrismaEventRepository implements EventsRepository {
     details: string | null; 
     slug: string; 
     maximumAttendees: number | null; 
+    attendeesAmount: number | null;
   } | null> {
     const getEvent = await prisma.event.findUnique({
       where: {
@@ -43,8 +44,18 @@ export class PrismaEventRepository implements EventsRepository {
         slug: true,
         details: true,
         maximumAttendees: true,
+        _count: true
       }
     });
-    return getEvent;
-  }
-}  
+
+    if (!getEvent) return null;
+    return {
+      id: getEvent.id,
+      title: getEvent.title,
+      slug: getEvent.slug,
+      details: getEvent.details,
+      maximumAttendees: getEvent.maximumAttendees,
+      attendeesAmount: getEvent._count.Attendee, 
+    };}
+}
+  

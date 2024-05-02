@@ -1,7 +1,7 @@
 import { Event } from '@prisma/client'
 import { EventsRepository } from '../repositories/events-repositories'
 import { generateSlug } from '../utils/generate-slug';
-import { prisma } from '../lib/prisma';
+import { TitleAlreadyExistsError } from '../errors/title-already-exists-error';
 
 interface CreateEventsUseCaseRequest {
   title: string,
@@ -27,7 +27,7 @@ export class CreateEventUseCase {
     const eventWithSameSlug = await this.eventsRepository.findBySlug(slug);
     
     if (eventWithSameSlug !== null) {
-      throw new Error('Another event with the same title already exists.');
+      throw new TitleAlreadyExistsError();
     }  
 
     const event = await this.eventsRepository.create({
