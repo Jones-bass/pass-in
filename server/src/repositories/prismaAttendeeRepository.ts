@@ -1,8 +1,7 @@
-import { AttendeeRepository, propsAttendee, propsGetAttendee } from './attendee-repository'
+import { AttendeeRepository, propsAttendee, propsAttendeeEvent } from './attendee-repository'
 import { prisma } from '../lib/prisma'
 import { TheMaximumNumberError } from '../errors/the-maximum-number-error'
 import { EmailAlreadyExistsError } from '../errors/email-already-exists-error'
-import { Attendee } from '@prisma/client'
 
 export class PrismaAttendeeRepository implements AttendeeRepository {
   async create(data: propsAttendee) {
@@ -12,6 +11,51 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
 
     return createEvent
   }
+
+  async findAttendees(eventId: string, query: number, pageIndex: number): Promise<{ attendees: propsAttendeeEvent[], total: number }> {
+    const take = 10; 
+    const skip = pageIndex || 0 * take;
+
+    const attendees = await prisma.attendee.findMany({
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+            checkIn: {
+                select: {
+                    createdAt: true
+                }
+            }
+        },
+        where: query ? {
+            eventId,
+            name: {
+                contains: query.toString(),
+            }
+        } : {
+            eventId,
+        },
+        take: take,
+        skip: skip, 
+        orderBy: {
+            createdAt: "desc"
+        },
+    });
+
+    const total = await prisma.attendee.count({
+        where: query ? {
+            eventId,
+            name: {
+                contains: query.toString(),
+            }
+        } : {
+            eventId,
+        },
+    });
+
+    return { attendees, total };
+}
 
   async findMaxNumber(eventId: string, email: string) {
     const attendeeFromEmail = await prisma.attendee.findUnique({
@@ -48,34 +92,33 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
     return attendeeFromEmail
   }
 
-  async findByAttendeeId( attendeeId: string): Promise<{
+  async findByAttendeeId(attendeeId: string): Promise<{
     id: number;
     name: string;
     email: string;
     createdAt: Date;
     eventId: string;
-    eventTitle: string; 
-  } | null>   
-   {
+    eventTitle: string;
+  } | null> {
     const getEvent = await prisma.attendee.findUnique({
       where: {
         id: parseInt(attendeeId),
       },
       select: {
-        id: true, 
+        id: true,
         name: true,
         email: true,
         eventId: true,
         createdAt: true,
         event: {
           select: {
-            title: true, 
+            title: true,
             _count: true,
           },
         },
       },
     });
-  
+
     if (!getEvent) return null;
     return {
       id: getEvent.id,
@@ -83,6 +126,7 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
       email: getEvent.email,
       createdAt: getEvent.createdAt,
       eventId: getEvent.eventId,
-      eventTitle: getEvent.event.title, 
-    };}
+      eventTitle: getEvent.event.title,
+    };
+  }
 }
