@@ -32,15 +32,15 @@ interface PropsEvent {
 export function AttendeeList({ attendees }: PropsEvent) {
   const [inputValue, setInputValue] = useState<Attendee[]>(attendees);
   const [page, setPage] = useState<number>(1);
-  const [totalParticipants, setTotalParticipants] = useState<number>(0); 
+  const [totalParticipants, setTotalParticipants] = useState<number>(0);
 
   useEffect(() => {
     api.get(`/event/9e9bd979-9d10-4915-b339-3786b1634f33/attendees`)
       .then(response => {
         const fetchedAttendees = response.data.attendees;
         setInputValue(fetchedAttendees);
-        setTotalParticipants(response.data.total); 
-        console.log(fetchedAttendees); 
+        setTotalParticipants(response.data.total);
+        console.log(fetchedAttendees);
       })
   }, []);
 
@@ -52,7 +52,7 @@ export function AttendeeList({ attendees }: PropsEvent) {
     );
     setInputValue(filteredAttendees);
   }
-  
+
 
   function goToNextPage() {
     setPage(page + 1);
@@ -70,8 +70,8 @@ export function AttendeeList({ attendees }: PropsEvent) {
     setPage(totalPages);
   }
 
-  const itemsPerPage = 10; 
-  const totalPages = Math.ceil(totalParticipants / itemsPerPage); 
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(totalParticipants / itemsPerPage);
 
   return (
     <>
@@ -98,11 +98,9 @@ export function AttendeeList({ attendees }: PropsEvent) {
             </tr>
           </thead>
           <tbody>
-          {inputValue && inputValue.slice((page - 1) * 10, page * 10).map((attendee) => {
-
+            {inputValue && inputValue.slice((page - 1) * 10, page * 10).map((attendee) => {
               return (
                 <TableRow key={attendee.id}>
-
                   <TableCell>
                     <input type="checkbox" className="size-4 bg-black/20 rounded border border-white/10 checked:bg-orange-400" />
                   </TableCell>
@@ -128,7 +126,7 @@ export function AttendeeList({ attendees }: PropsEvent) {
               </TableCell>
               <TableCell className="text-right" colSpan={3}>
                 <div className="inline-flex gap-8 items-center">
-                <span>Página {page} de {totalPages}</span>
+                  <span>Página {page} de {totalPages}</span>
                   <div className="flex gap-1.5">
                     <IconButton onClick={goToFirstPage} disabled={page === 1}>
                       <ChevronsLeft className="size-4" />
