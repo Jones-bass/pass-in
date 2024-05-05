@@ -13,7 +13,7 @@ export class PrismaAttendeeRepository implements AttendeeRepository {
   }
 
   async findAttendees(eventId: string, query: number, pageIndex: number): Promise<{ attendees: propsAttendeeEvent[], total: number }> {
-    const take = 10; 
+    const take = 100; 
     const skip = pageIndex || 0 * take;
 
     const attendees = await prisma.attendee.findMany({

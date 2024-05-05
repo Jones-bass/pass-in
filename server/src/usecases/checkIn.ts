@@ -17,7 +17,7 @@ export class CheckInUseCase {
         throw new EmailAlreadyExistsError();
       }
 
-      const newCheckIn = await this.checkInRepository.create({
+      const newCheckIn = await this.checkInRepository.createCheckIn({
         attendee: { connect: { id: parseInt(attendeeId) } },
         createdAt: new Date(),
       });

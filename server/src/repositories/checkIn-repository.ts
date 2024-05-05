@@ -7,6 +7,6 @@ export interface propsCheckIn {
 }
 
 export interface CheckInRepository {
-  create(data: Prisma.CheckInCreateInput): Promise<CheckIn | null>
+  createCheckIn(data: Prisma.CheckInCreateInput): Promise<CheckIn | null>
   findByAttendeeId(attendeeId: string): Promise<CheckIn | null>   
 }
