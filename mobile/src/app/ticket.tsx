@@ -6,18 +6,32 @@ import {
   TouchableOpacity,
 } from "react-native"
 import { Button } from "../components/button"
+import { FontAwesome } from "@expo/vector-icons"
+import { colors } from "../styles/colors"
+import { Credential } from "../components/credential"
+import { Header } from "../components/header"
 
 export default function Ticket() {
 
   return (
     <View className="flex-1 bg-green-500">
       <StatusBar barStyle="light-content" />
+      <Header title="Minha Credencial" />
 
       <ScrollView
         className="-mt-28 -z-10"
         contentContainerClassName="px-8 pb-8"
         showsVerticalScrollIndicator={false}
       >
+        <Credential />
+
+        <FontAwesome
+          name="angle-double-down"
+          color={colors.gray[300]}
+          size={24}
+          className="self-center my-6"
+        />
+
         <Text className="text-white font-bold text-2xl mt-4">
           Compartilhar credencial
         </Text>
@@ -37,7 +51,6 @@ export default function Ticket() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-
     </View>
   )
 }

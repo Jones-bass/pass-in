@@ -24,7 +24,7 @@ export default function Home() {
       <StatusBar barStyle="light-content" />
 
       <Image
-        source={Logo}
+        source={Logo} 
         className="h-16"
         resizeMode="contain"
       />
