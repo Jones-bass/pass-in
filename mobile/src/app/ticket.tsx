@@ -4,14 +4,37 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  ToastAndroid,
 } from "react-native"
 import { Button } from "../components/button"
 import { FontAwesome } from "@expo/vector-icons"
 import { colors } from "../styles/colors"
 import { Credential } from "../components/credential"
 import { Header } from "../components/header"
+import { useState } from "react"
+import * as ImagePicker from "expo-image-picker"
 
 export default function Ticket() {
+
+  const [expandQRCode, setExpandQRCode] = useState(false)
+  const [image, setImage] = useState('')
+
+  async function handleSelectImage() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 4],
+      })
+
+      if (result.assets) {
+        setImage(result.assets[0].uri)
+      }
+    } catch (error) {
+      console.log(error)
+      ToastAndroid.show('Foto, Não foi possível selecionar a imagem.', ToastAndroid.SHORT);
+    }
+  }
 
   return (
     <View className="flex-1 bg-green-500">
@@ -23,7 +46,7 @@ export default function Ticket() {
         contentContainerClassName="px-8 pb-8"
         showsVerticalScrollIndicator={false}
       >
-        <Credential />
+        <Credential image={image} onChangeAvatar={handleSelectImage} />
 
         <FontAwesome
           name="angle-double-down"

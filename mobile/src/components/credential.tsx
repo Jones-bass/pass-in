@@ -9,8 +9,15 @@ import {
 import QRCode from '../assets/ticket/qrcode.png'
 import band from '../assets/ticket/band.png'
 import header from '../assets/ticket/header.png'
+import { Feather } from "@expo/vector-icons"
+import { colors } from "../styles/colors"
 
-export function Credential() {
+type Props = {
+  image?: string
+  onChangeAvatar?: () => void
+}
+
+export function Credential({ image, onChangeAvatar }: Props) {
   return (
     <>
       <Image
@@ -25,7 +32,7 @@ export function Credential() {
         >
           <View className="w-full flex-row items-center justify-between">
             <Text className="text-zinc-50 text-sm font-bold">
-              data.eventTitle
+              eventTitle
             </Text>
             <Text className="text-zinc-50 text-sm font-bold">#02</Text>
           </View>
@@ -33,12 +40,21 @@ export function Credential() {
           <View className="w-40 h-40 bg-black rounded-full" />
         </ImageBackground>
 
-        <TouchableOpacity activeOpacity={0.9}>
-          <Image
-            source={{ uri: "https://github.com/jones-bass.png" }}
-            className="w-36 h-36 rounded-full -mt-24"
-          />
-        </TouchableOpacity>
+        {image ? (
+          <TouchableOpacity activeOpacity={0.9} onPress={onChangeAvatar}>
+            <Image
+              source={{ uri: image }}
+              className="w-36 h-36 rounded-full -mt-24"
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity activeOpacity={0.9}
+            className="w-36 h-36 rounded-full -mt-24 bg-gray-400 items-center justify-center"
+            onPress={onChangeAvatar}
+          >
+            <Feather name="camera" color={colors.green[400]} size={32} />
+          </TouchableOpacity>
+        )}
 
         <Text className="font-bold text-2xl text-zinc-50 mt-4">
           Jones

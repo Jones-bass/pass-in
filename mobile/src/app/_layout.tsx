@@ -9,6 +9,7 @@ import {
   Roboto_500Medium,
   Roboto_400Regular,
 } from "@expo-google-fonts/roboto"
+import { StatusBar, } from "react-native"
 
 
 export default function Layout() {
@@ -18,10 +19,16 @@ export default function Layout() {
     Roboto_400Regular,
   })
 
-  if (!fontsLoaded) {
-    return <Loading />
-  }
 
-  return <Slot />
+  return (
+    <>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+      {fontsLoaded ? <Slot /> : <Loading />}
+    </>
+  );
 }
 
