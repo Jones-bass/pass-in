@@ -9,6 +9,7 @@ import { useState } from "react"
 import { api } from "../server/api"
 import axios from "axios"
 import Toast from 'react-native-toast-message'
+import { useBadgeStore } from "../store/badge-store"
 
 const eventId = '9e9bd979-9d10-4915-b339-3786b1634f33'
 
@@ -17,6 +18,7 @@ export default function Register() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
+  const badgeStore = useBadgeStore()
 
   async function handleRegister() {
     try {
@@ -41,6 +43,12 @@ export default function Register() {
       })
 
       if (registerResponse.data.attendeeId) {
+        const badgeResponse = await api.get(
+          `/attendees/${registerResponse.data.attendeeId}/badge`
+        )
+
+        badgeStore.save(badgeResponse.data.badge)
+
        return Toast.show({
           type: 'success',
           text1: 'Sucesso',

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Modal,
+  Share,
 } from "react-native"
 import { Button } from "../components/button"
 import { FontAwesome } from "@expo/vector-icons"
@@ -15,11 +16,44 @@ import { Header } from "../components/header"
 import { useState } from "react"
 import * as ImagePicker from "expo-image-picker"
 import { QRCode } from "../components/qrcode"
+import { useBadgeStore } from "../store/badge-store"
+import { Redirect } from "expo-router"
+import Toast from "react-native-toast-message"
 
 export default function Ticket() {
 
   const [expandQRCode, setExpandQRCode] = useState(false)
   const [image, setImage] = useState('')
+
+  const badgeStore = useBadgeStore()
+
+  async function handleShare() {
+    try {
+      if (badgeStore.data?.checkInURL) {
+        await Share.share({
+          message: badgeStore.data.checkInURL,
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Algo deu Errado!',
+        text2: 'Não foi possível compartilhar!',
+        text1Style: {
+          color: '#F93D1F',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      });
+    }
+  }
+
+  if (!badgeStore.data?.checkInURL) {
+    return <Redirect href="/" />
+  }
+
+
 
   async function handleSelectImage() {
     try {
@@ -48,7 +82,11 @@ export default function Ticket() {
         contentContainerClassName="px-8 pb-8"
         showsVerticalScrollIndicator={false}
       >
-        <Credential image={image} onChangeAvatar={handleSelectImage} onExpandQRCode={() => setExpandQRCode(true)}
+        <Credential 
+          data={badgeStore.data}
+          image={image} 
+          onChangeAvatar={handleSelectImage} 
+          onExpandQRCode={() => setExpandQRCode(true)}
         />
 
         <FontAwesome
@@ -66,11 +104,12 @@ export default function Ticket() {
           Mostre ao mundo que você vai participar do evento{" "}
         </Text>
 
-        <Button title="Compartilhar" />
+        <Button title="Compartilhar" onPress={handleShare} />
 
         <TouchableOpacity
           className="mt-10"
           activeOpacity={0.7}
+          onPress={() => badgeStore.remove()}
         >
           <Text className="text-base text-white font-bold text-center">
             Remover Ingresso

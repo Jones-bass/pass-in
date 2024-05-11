@@ -1,5 +1,5 @@
 
-import { View, Image, StatusBar, ToastAndroid } from "react-native"
+import { View, Image, StatusBar } from "react-native"
 
 import Logo from '../assets/logo.png';
 import { Input } from "../components/input";
@@ -7,13 +7,17 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../styles/colors";
 import { Button } from "../components/button";
 import { useState } from "react";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { api } from "../server/api";
 import Toast from "react-native-toast-message";
+import { useBadgeStore } from "../store/badge-store";
 
 export default function Home() {
   const [code, setCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  const badgeStore = useBadgeStore()
+  console.log("DADOS =>", badgeStore.data)
 
   async function handleAccessCredential() {
     try {
@@ -32,6 +36,8 @@ export default function Home() {
       setIsLoading(true)
 
       const { data } = await api.get(`/attendees/${code}/badge`)
+      badgeStore.save(data.badge)
+
       console.log(data)
     } catch (error) {
       setIsLoading(false)
@@ -48,6 +54,10 @@ export default function Home() {
       });
     }
   }
+  if (badgeStore.data?.checkInURL) {
+    return <Redirect href="/ticket" />
+  }
+
 
   return (
     <View className="flex-1 items-center justify-center p-8">

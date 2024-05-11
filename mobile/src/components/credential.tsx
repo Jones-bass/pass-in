@@ -11,14 +11,16 @@ import header from '../assets/ticket/header.png'
 import { Feather } from "@expo/vector-icons"
 import { colors } from "../styles/colors"
 import { QRCode } from "./qrcode"
+import { BadgeStore } from "../store/badge-store"
 
 type Props = {
   image?: string
+  data: BadgeStore
   onChangeAvatar?: () => void
   onExpandQRCode?: () => void
 }
 
-export function Credential({ image, onChangeAvatar, onExpandQRCode }: Props) {
+export function Credential({ data, image, onChangeAvatar, onExpandQRCode }: Props) {
   return (
     <>
       <Image
@@ -33,15 +35,15 @@ export function Credential({ image, onChangeAvatar, onExpandQRCode }: Props) {
         >
           <View className="w-full flex-row items-center justify-between">
             <Text className="text-zinc-50 text-sm font-bold">
-              eventTitle
+              {data.eventTitle}
             </Text>
-            <Text className="text-zinc-50 text-sm font-bold">#02</Text>
+            <Text className="text-zinc-50 text-sm font-bold">#{data.id}</Text>
           </View>
 
           <View className="w-40 h-40 bg-black rounded-full" />
         </ImageBackground>
 
-        {image ? (
+        {data.image ? (
           <TouchableOpacity activeOpacity={0.9} onPress={onChangeAvatar}>
             <Image
               source={{ uri: image }}
@@ -58,11 +60,11 @@ export function Credential({ image, onChangeAvatar, onExpandQRCode }: Props) {
         )}
 
         <Text className="font-bold text-2xl text-zinc-50 mt-4">
-          Jones
+          {data.name}
         </Text>
 
         <Text className="font-regular text-base text-zinc-300 mb-4">
-          jonesbass.tb@gmail.com
+          {data.email}
         </Text>
 
         <QRCode value="QRCode Teste" size={120} />
