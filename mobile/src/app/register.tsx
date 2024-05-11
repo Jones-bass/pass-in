@@ -1,4 +1,4 @@
-import { View, Image, StatusBar, Alert, ToastAndroid } from "react-native"
+import { View, Image, StatusBar } from "react-native"
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons"
 import { Link, router } from "expo-router"
 import { Input } from "../components/input"
@@ -6,23 +6,86 @@ import { colors } from "../styles/colors"
 import { Button } from "../components/button"
 import logo from '../assets/logo.png'
 import { useState } from "react"
+import { api } from "../server/api"
+import axios from "axios"
+import Toast from 'react-native-toast-message'
+
+const eventId = '9e9bd979-9d10-4915-b339-3786b1634f33'
 
 export default function Register() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
+
   async function handleRegister() {
-    if (!name.trim() || !email.trim()) {
-      return ToastAndroid.show('"Inscrição", "Preencha todos os campos!"', ToastAndroid.SHORT);
+    try {
+      if (!name.trim() || !email.trim()) {
+        return  Toast.show({
+          type: 'info',
+          text1: 'Inscrição!',
+          text2: 'Inscrição, Preencha todos os campos!',
+          text1Style: {
+            color: '#3BABF9',
+            fontWeight: 'bold',
+            fontSize: 14,
+          },
+        })
+      }
 
-    }
+      setIsLoading(true)
 
-    router.push('/ticket')
+      const registerResponse = await api.post(`/event/${eventId}/attendees`, {
+        name,
+        email,
+      })
+
+      if (registerResponse.data.attendeeId) {
+       return Toast.show({
+          type: 'success',
+          text1: 'Sucesso',
+        })
+      }
+      
+      router.push("/ticket")
+
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+
+      if (axios.isAxiosError(error)) {
+        if (
+          String(error.response?.data.message).includes("already registered")
+        ) {
+          return Toast.show({
+            type: 'error',
+            text1: 'Inscrição!',
+            text2: 'Inscrição, Este e-mail já está cadastrado!',
+            text1Style: {
+              color: '#F93D1F',
+              fontWeight: 'bold',
+              fontSize: 14,
+            },
+          });
+        }
+      }
+
+      Toast.show({
+        type: 'error',
+        text1: 'Algo deu errado!',
+        text2: 'Não foi possível fazer a inscrição',
+        text1Style: {
+          color: '#F93D1F',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      });
+    } 
   }
 
+
   return (
-    <View className="flex-1 bg-green-500 items-center justify-center p-8">
+    <View className="flex-1 items-center justify-center p-8">
       <StatusBar barStyle="light-content" />
 
       <Image

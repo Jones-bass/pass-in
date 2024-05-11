@@ -8,23 +8,53 @@ import { colors } from "../styles/colors";
 import { Button } from "../components/button";
 import { useState } from "react";
 import { Link } from "expo-router";
+import { api } from "../server/api";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
   const [code, setCode] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleAccessCredential() {
-    if (!code.trim()) {
-      return ToastAndroid.show('Ingresso, Ingresso não encontrado!', ToastAndroid.SHORT);
+    try {
+      if (!code.trim()) {
+        return Toast.show({
+          type: 'info',
+          text1: 'Ingresso!',
+          text2: 'Informe o código do ingresso!',
+          text1Style: {
+            color: '#3BABF9',
+            fontWeight: 'bold',
+            fontSize: 14,
+          },
+        });
+      }
+      setIsLoading(true)
+
+      const { data } = await api.get(`/attendees/${code}/badge`)
+      console.log(data)
+    } catch (error) {
+      setIsLoading(false)
+
+      return Toast.show({
+        type: 'error',
+        text1: 'Ingresso!',
+        text2: 'Ingresso, Ingresso não encontrado!',
+        text1Style: {
+          color: '#F93D1F',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      });
     }
   }
 
   return (
-    <View className="flex-1 bg-green-500 items-center justify-center p-8">
+    <View className="flex-1 items-center justify-center p-8">
       <StatusBar barStyle="light-content" />
 
       <Image
-        source={Logo} 
+        source={Logo}
         className="h-16"
         resizeMode="contain"
       />

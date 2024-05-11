@@ -10,6 +10,8 @@ import {
   Roboto_400Regular,
 } from "@expo-google-fonts/roboto"
 import { StatusBar, } from "react-native"
+import { Background } from "../components/background"
+import Toast from 'react-native-toast-message';
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({
@@ -19,14 +21,19 @@ export default function Layout() {
   })
 
   return (
-    <>
+    <Background>
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
         translucent
       />
+
+      <Toast
+        position='top'
+      />
+      
       {fontsLoaded ? <Slot /> : <Loading />}
-    </>
+    </Background>
   );
 }
 
